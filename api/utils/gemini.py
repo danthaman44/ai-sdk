@@ -3,19 +3,22 @@ import json
 import traceback
 import uuid
 from dotenv import load_dotenv
-# Vercel only supports the deprecated generativeai api
-import google.generativeai as genai
-from google.generativeai import types
+from google import genai
+from google.genai import types
 
 load_dotenv(".env.local")
-
 api_key = os.getenv("GOOGLE_GENERATIVE_AI_API_KEY")
-genai.configure(api_key=api_key)
-model = genai.GenerativeModel(model_name='gemini-2.5-flash')
+client = genai.Client(api_key=api_key)
 
 def gemini_response(prompt):  
-    response = model.generate_content(
-        contents=prompt
+    response = client.models.generate_content(
+        model='gemini-2.5-flash',
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            system_instruction="You are an expert on Artificial Intelligence",
+            max_output_tokens=500,
+            temperature=0.5,
+        )
     )
     return response.text
 
@@ -32,8 +35,15 @@ async def stream_gemini_response(prompt: str):
     yield format_sse({"type": "start", "messageId": message_id})
     
     try:
-        stream = model.generate_content(
-          contents=prompt
+        # Use streaming API from Gemini
+        stream = client.models.generate_content_stream(
+            model='gemini-2.5-flash',
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                system_instruction="You are an expert on Artificial Intelligence",
+                max_output_tokens=1000,
+                temperature=0.5,
+            )
         )
         
         for chunk in stream:

@@ -1,7 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from fastapi import FastAPI, Query, Request as FastAPIRequest, HTTPException
+from fastapi import FastAPI, Query, Request as FastAPIRequest, HTTPException, UploadFile, File
 from fastapi.responses import StreamingResponse, JSONResponse
 from openai import OpenAI
 import uuid as uuid_lib
@@ -12,7 +12,6 @@ from .utils.gemini import gemini_response, stream_gemini_response
 from vercel import oidc
 from vercel.headers import set_headers
 from .utils.supabase import create_message, get_messages, Message
-
 load_dotenv(".env.local")
 
 app = FastAPI()
@@ -68,7 +67,7 @@ async def handle_chat_data(request: Request, protocol: str = Query('data')):
 
     await create_message(message=Message(thread_id=thread_id, sender="user", content=prompt))
 
-    response = StreamingResponse(stream_gemini_response(prompt), media_type='text/event-stream')
+    response = StreamingResponse(stream_gemini_response(prompt, thread_id), media_type='text/event-stream')
     return patch_response_with_headers(response, protocol)
 
 @app.post("/api/generate")
@@ -83,3 +82,13 @@ async def generate_response(request: PromptRequest):
 async def get_messages_by_thread_id(thread_id: str):
     data = await get_messages(thread_id)
     return JSONResponse(content=data, status_code=200)
+
+@app.post("/api/files/upload")
+async def upload_file(file: UploadFile = File(...)):
+    try:
+        print("file name: ", file.filename)
+        print("file content_type: ", file.content_type)
+        print("file size in bytes: ", file.size)
+        return JSONResponse(content={"message": "File uploaded successfully"}, status_code=200)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error uploading file: {e}")

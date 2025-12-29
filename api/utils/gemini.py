@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from .prompt import interviewer_system_prompt
+from .supabase import create_message, Message
 
 load_dotenv(".env.local")
 api_key = os.getenv("GOOGLE_GENERATIVE_AI_API_KEY")
@@ -23,7 +24,7 @@ def gemini_response(prompt):
     )
     return response.text
 
-async def stream_gemini_response(prompt: str):
+async def stream_gemini_response(prompt: str, thread_id: str):
     """Emit a streaming SSE response from Gemini API."""
     
     def format_sse(payload: dict) -> str:
@@ -53,7 +54,9 @@ async def stream_gemini_response(prompt: str):
                     yield format_sse({"type": "text-start", "id": text_stream_id})
                     text_started = True
                 yield format_sse({"type": "text-delta", "id": text_stream_id, "delta": chunk.text})
-        
+                # Save the AI message to the database
+                await create_message(message=Message(thread_id=thread_id, sender="ai", content=chunk.text))
+
         if text_started:
             yield format_sse({"type": "text-end", "id": text_stream_id})
         

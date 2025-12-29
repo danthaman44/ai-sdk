@@ -125,6 +125,34 @@ export function MultimodalInput({
     adjustHeight();
   };
 
+  const uploadFile = useCallback(async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("/api/files/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const { url, pathname, contentType } = data;
+        toast.success(file.name + " uploaded successfully!");
+
+        return {
+          url,
+          name: pathname,
+          contentType,
+        };
+      }
+      const { error } = await response.json();
+      toast.error(error);
+    } catch (_error) {
+      toast.error("Failed to upload file, please try again!");
+    }
+  }, []);
+
   const submitForm = useCallback(() => {
     handleSubmit(undefined, {});
     setLocalStorageInput("");
@@ -200,6 +228,14 @@ export function MultimodalInput({
         ref={fileInputRef}
         type="file"
         className="hidden"
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) {
+            uploadFile(file);
+            // Reset input value so onChange fires even if the same file is selected again
+            event.target.value = '';
+          }
+        }}
         multiple
         accept="application/pdf"
       />

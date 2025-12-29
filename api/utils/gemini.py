@@ -15,7 +15,7 @@ api_key = os.getenv("GOOGLE_GENERATIVE_AI_API_KEY")
 client = genai.Client(api_key=api_key)
 
 MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10 MB size limit
-GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-2.5-flash-lite"
 
 def gemini_response(prompt):  
     response = client.models.generate_content(

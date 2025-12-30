@@ -10,6 +10,7 @@ from google.genai import types
 from .prompt import system_prompt
 from .supabase import create_message, save_resume, Message
 from fastapi import UploadFile, File, HTTPException
+from .logging import log_info
 
 load_dotenv(".env.local")
 api_key = os.getenv("GOOGLE_GENERATIVE_AI_API_KEY")
@@ -30,7 +31,7 @@ def gemini_response(prompt):
     )
     return response.text
 
-async def stream_gemini_response(prompt: str, thread_id: str):
+async def stream_gemini_response(prompt: str, thread_id: str, file_reference: str):
     """Emit a streaming SSE response from Gemini API."""
     
     def format_sse(payload: dict) -> str:
@@ -44,12 +45,14 @@ async def stream_gemini_response(prompt: str, thread_id: str):
     
     try:
         # Use streaming API from Gemini
+        retrieved_file = client.files.get(name=file_reference)
+        log_info(f"Retrieved file: {retrieved_file.name}")
         stream = client.models.generate_content_stream(
             model='gemini-2.5-flash',
-            contents=prompt,
+            contents=[retrieved_file, prompt],
             config=types.GenerateContentConfig(
                 system_instruction=system_prompt(),
-                max_output_tokens=1000,
+                max_output_tokens=1024,
                 temperature=0.5,
             )
         )
@@ -76,7 +79,7 @@ async def stream_gemini_response(prompt: str, thread_id: str):
         yield "data: [DONE]\n\n"
         raise
 
-async def upload_file_to_gemini(thread_id: str, file: UploadFile = File(...)):
+async def upload_file_to_gemini(file: UploadFile = File(...)):
     if file.size > MAX_UPLOAD_SIZE:
         raise HTTPException(status_code=413, detail="File size exceeds the allowed limit")
     
@@ -99,19 +102,19 @@ async def upload_file_to_gemini(thread_id: str, file: UploadFile = File(...)):
             gemini_file = client.files.get(name=gemini_file.name)
 
         # Generate content using the uploaded resume
-        result = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=[
-                gemini_file,
-                "Briefly thank the user for uploading the resume. Do not output anything else.",
-            ],
-            config=types.GenerateContentConfig(
-                system_instruction=system_prompt(),
-                max_output_tokens=1024,
-                temperature=0.5,
-            )
-        )
-        return result.text, gemini_file
+        # result = client.models.generate_content(
+        #     model=GEMINI_MODEL,
+        #     contents=[
+        #         gemini_file,
+        #         "Briefly thank the user for uploading the resume. Do not output anything else.",
+        #     ],
+        #     config=types.GenerateContentConfig(
+        #         system_instruction=system_prompt(),
+        #         max_output_tokens=1024,
+        #         temperature=0.5,
+        #     )
+        # )
+        return gemini_file
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error uploading file: {e}")

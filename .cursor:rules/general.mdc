@@ -5,11 +5,12 @@ alwaysApply: true
 ---
 
 # Project Overview
-- Next.js 16 App Router for frontend
-- FastAPI for backend API
-- Deployed on Vercel
 - TypeScript for frontend, Python for backend
+- Next.js 16 for frontend UI
+- FastAPI for REST backend service
+- Google Gemini API for generative AI tasks
 - Supabase PostgresSQL database for persistent storage
+- Deployed on Vercel
 
 # Code Style
 - Use consistent naming conventions

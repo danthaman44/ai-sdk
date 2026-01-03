@@ -1,41 +1,60 @@
-# AI SDK Python Streaming Preview
+# ExperienceIQ
 
-This template demonstrates the usage of [Data Stream Protocol](https://sdk.vercel.ai/docs/ai-sdk-ui/stream-protocol#data-stream-protocol) to stream chat completions from a Python endpoint ([FastAPI](https://fastapi.tiangolo.com)) and display them using the [useChat](https://sdk.vercel.ai/docs/ai-sdk-ui/chatbot#chatbot) hook in your Next.js application.
+> Transform your resume into a Top 1% application with AI-powered career coaching
 
-## Deploy your own
+## Overview
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel-labs/ai-sdk-preview-python-streaming)
+ExperienceIQ is an intelligent resume review platform that combines modern hiring standards, ATS optimization, and personalized coaching to help job seekers create exceptional applications. By leveraging advanced AI analysis, ExperienceIQ provides actionable feedback on resume content, formatting, keyword alignment, and overall effectiveness.
 
-## How to use
+## Product Features
 
-Run [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+### AI Career Strategist
+- **Comprehensive Resume Analysis**: Deep evaluation of content, structure, and presentation
+- **ATS Optimization**: Ensures resumes pass Applicant Tracking Systems with proper formatting and keyword usage
+- **Interactive Coaching**: Real-time, personalized guidance tailored to your target role and industry
+- **Action Verb Enhancement**: Identifies weak language and suggests powerful alternatives
+- **Keyword Alignment**: Matches resume content with job description requirements
+- **Modern Standards**: Feedback based on current hiring best practices and recruiter expectations
 
-```bash
-npx create-next-app --example https://github.com/vercel-labs/ai-sdk-preview-python-streaming ai-sdk-preview-python-streaming-example
-```
+### User Experience
+1. **Upload Resume**: Support for PDF, DOCX, and TXT formats
+2. **Instant Analysis**: AI-powered review of resume content and structure
+3. **Detailed Feedback**: Section-by-section recommendations with specific examples
+4. **Iterative Improvement**: Continuous coaching to refine and optimize applications
 
-```bash
-yarn create next-app --example https://github.com/vercel-labs/ai-sdk-preview-python-streaming ai-sdk-preview-python-streaming-example
-```
+## Technical Architecture
 
-```bash
-pnpm create next-app --example https://github.com/vercel-labs/ai-sdk-preview-python-streaming ai-sdk-preview-python-streaming-example
-```
+### Technology Stack
 
-To run the example locally you need to:
+**Frontend**
+- **Framework**: Next.js 16
+- **Language**: TypeScript
+- **Deployment**: Vercel
+- **Features**: Server-side rendering, API routes, optimized performance
 
-1. Sign up for accounts with the AI providers you want to use (e.g., OpenAI, Anthropic).
-2. Obtain API keys for each provider.
-3. Set the required environment variables as shown in the `.env.example` file, but in a new file called `.env`.
-4. `pnpm install` to install the required Node dependencies.
-5. `virtualenv venv` to create a virtual environment.
-6. `source venv/bin/activate` to activate the virtual environment.
-7. `pip install -r requirements.txt` to install the required Python dependencies.
-8. `pnpm dev` to launch the development server.
+**Backend**
+- **Framework**: FastAPI
+- **Language**: Python
+- **Deployment**: Vercel (Serverless Functions)
+- **Features**: High-performance REST API, async request handling
 
-## Learn More
+**AI & Machine Learning**
+- **Provider**: Google Gemini API
+- **Capabilities**: Natural language understanding, resume parsing, content generation, personalized recommendations
 
-To learn more about the AI SDK or Next.js by Vercel, take a look at the following resources:
+**Database**
+- **Platform**: Supabase PostgreSQL
+- **Features**: Persistent storage, real-time capabilities, row-level security
+- **Data**: User profiles, resume versions, analysis history, feedback cache
 
-- [AI SDK Documentation](https://sdk.vercel.ai/docs)
-- [Next.js Documentation](https://nextjs.org/docs)
+## License
+
+MIT License
+
+## Contact
+
+For technical questions or support, contact dan.deng.wei@gmail.com
+
+---
+
+Built with ❤️ to help job seekers succeed

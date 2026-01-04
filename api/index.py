@@ -110,19 +110,16 @@ async def get_chat_history(thread_id: str):
     Fetch messages for a specific chat thread
     """
     try:  
-        messages = [
-            UIMessage(
-                id="1",
-                role="user",
-                parts=[MessagePart(type="text", text="Hello, how are you?")]
-            ),
-            UIMessage(
-                id="2",
-                role="assistant",
-                parts=[MessagePart(type="text", text="I'm good, thank you! How can I help you today?")]
-            ), 
-        ]
-        return ChatHistoryResponse(messages=messages)
+        ui_messages = []
+        stored_messages = await get_messages(thread_id)
+        for message in stored_messages:
+            sender = 'assistant' if message["sender"] == 'model' else 'user'
+            ui_messages.append(UIMessage(
+                id=str(message["id"]),
+                role=sender,
+                parts=[MessagePart(type="text", text=message["content"])]
+            ))
+        return ChatHistoryResponse(messages=ui_messages[::-1])
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

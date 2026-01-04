@@ -38,7 +38,7 @@ async def handle_function_call(thread_id: str, user_message: str, resume: File) 
     # The history retrieved by your tool call:
     retrieved_history = []
     past_messages = await get_messages(thread_id)
-    for past_message in past_messages[:-1]:
+    for past_message in past_messages[::-1]:
         retrieved_history.append({"role": past_message["sender"], "parts": [{"text": past_message["content"]}]})
 
     # The subsequent API call
